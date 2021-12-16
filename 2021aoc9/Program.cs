@@ -16,17 +16,18 @@ namespace _2021aoc9
             int M { get; }
             bool[,] gödör_e;
             int speed;
+            bool debug;
 
             int[,] szín; // szín[x,y]==z   <=>   "(x,y) pont színe z".
             List<(int, int)> gödrök; // gödrök[n] == (i,j)    <=>    "az n-edik gödör (i,j) helyen van"
             List<int> méret; // méret[n] == m    <=>    "az n-edik gödörből kiinduló medence mérete m"
-            public Domborzat(string path, int s = 0)
+            public Domborzat(string path, int s = 0, bool debug=false)
             {
                 speed = s;
                 string[] input = System.IO.File.ReadAllLines(path);
                 N = input.Length;
                 M = input.First().Length;
-
+                this.debug = debug;
                 szín = new int[N, M];
                 gödrök = new List<(int, int)>();
                 méret = new List<int>();
@@ -100,12 +101,12 @@ namespace _2021aoc9
             private int FloodFill(int x0, int y0)
             {
                 int méret = 0;
-                Stack<(int, int)> tennivalók = new Stack<(int, int)>();
-                tennivalók.Push((x0, y0));
+                Queue<(int, int)> tennivalók = new Queue<(int, int)>();
+                tennivalók.Enqueue((x0, y0));
 
                 while (0 < tennivalók.Count)
                 {
-                    (int i, int j) = tennivalók.Pop();
+                    (int i, int j) = tennivalók.Dequeue();
                     méret++;
                     szín[i, j] = 1; // fekete
                     foreach ((int,int) szomszéd in Szomszédai(i,j))
@@ -113,11 +114,11 @@ namespace _2021aoc9
                         (int x, int y) = szomszéd;
                         if (szín[x, y] == 0 && D[x, y] < 9) // fehér
                         {
-                            tennivalók.Push(szomszéd);
+                            tennivalók.Enqueue(szomszéd);
                             szín[x, y] = -1; // szürke
                         }
                     }
-                    //Diagnosztika();
+                    if(debug)Diagnosztika();
                 }
                 //Diagnosztika();
                 return méret;
@@ -157,7 +158,7 @@ namespace _2021aoc9
         {
             Console.WriteLine("Indulhat?");
             Console.ReadKey();
-            Domborzat d = new Domborzat("input.txt", 100);
+            Domborzat d = new Domborzat("teszt.txt", 100, true);
             Console.WriteLine(d.SumRiskLVL());
             Console.WriteLine(d.Három_legnagyobb_medence_szorzata());
             Console.ReadLine();
