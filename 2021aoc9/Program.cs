@@ -108,14 +108,14 @@ namespace _2021aoc9
                 {
                     (int i, int j) = tennivalók.Dequeue();
                     méret++;
-                    szín[i, j] = 1; // fekete
+                    szín[i, j] = 1; // zöld
                     foreach ((int,int) szomszéd in Szomszédai(i,j))
                     {
                         (int x, int y) = szomszéd;
                         if (szín[x, y] == 0 && D[x, y] < 9) // fehér
                         {
                             tennivalók.Enqueue(szomszéd);
-                            szín[x, y] = -1; // szürke
+                            szín[x, y] = -1; // piros
                         }
                     }
                     if(debug)Diagnosztika();
